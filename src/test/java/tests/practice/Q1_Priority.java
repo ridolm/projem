@@ -4,7 +4,6 @@ import org.testng.annotations.Test;
 
 public class Q1_Priority {
 
-
     /*
       ●TestNG (default ) olarak @Test methodları ni alfabetik sıraya gore run eder ..(Yukardan asagi degil)
       ●priority annotation Testlere öncelik vermek icin kullanilir, Kucuk olan Numara daha once calisir.
