@@ -1,6 +1,13 @@
 package tests.practice;
 
-public class Q7_WebTableTest {
+import org.openqa.selenium.JavascriptExecutor;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.WebtablePage;
+import utilities.Driver;
+import utilities.TestBaseRapor;
+
+public class Q7_WebTableTest extends TestBaseRapor {
 
      /*
    go to url : https://en.wikipedia.org/wiki/Dell
@@ -18,4 +25,26 @@ public class Q7_WebTableTest {
     6. satirin ilk hucresinde Compellent yazisinin goruntulendigini dogrulayin
 
     */
+
+    @Test
+    public void test(){
+        extentTest = extentReports.createTest("wikipedia webtable test", "table test");
+       Driver.getDriver().get(" https://en.wikipedia.org/wiki/Dell");
+       extentTest.info("istenilen url e gidildi");
+        WebtablePage webtablePage = new WebtablePage();
+        JavascriptExecutor jse  = (JavascriptExecutor) Driver.getDriver();
+        jse.executeScript("arguments[0].scrollIntoView(true);",webtablePage.nameOfList);
+
+        System.out.println("4.satir : " + webtablePage.fourthRow.getText());
+        extentTest.info("4. satir console da yazildi");
+
+        System.out.println("5.satir 2.element :" + webtablePage.secondElement.getText());
+        extentTest.info("5. satir 2.element console da yazildi");
+
+        System.out.println("5.satir 3.element : " + webtablePage.thirdElement.getText());
+        extentTest.info("5. satir 3.element console da yazildi");
+
+        Assert.assertTrue(webtablePage.sixthElement.isDisplayed());
+        extentTest.pass("Compellent yazi goruldu");
+    }
 }
