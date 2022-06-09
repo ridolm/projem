@@ -19,6 +19,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class StudentPractice_InstagramLogin extends TestBaseRapor {
+
+    //instagram anasayfasina giris yap
+    //dogru username ve dogru password bilgileri gir
+    //eger login butonu tiklanilabilir olursa tikla
+    //"Save Your Login Info?" yazisinda "Not Now" butonuna tikla
+    //"Turn on Notifications" yazisinda "Not Now" butonuna tikla
+    //giris yapildigini fotografli sekilde dogrula ve rapor belirt
+
     @DataProvider
     public static Object[][] validEmailPassword() {
 
@@ -45,8 +53,8 @@ public class StudentPractice_InstagramLogin extends TestBaseRapor {
         extentTest.info("Valid password girildi");
 
         //eger login butonu tiklanilabilir olursa tikla
-    //    WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(5));
-    //    wait.until(ExpectedConditions.elementToBeClickable(instagramPage.loginButonuElement));
+        WebDriverWait wait = new WebDriverWait(Driver.getDriver(), Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.elementToBeClickable(instagramPage.loginButonuElement));
         instagramPage.loginButonuElement.click();
         extentTest.info("Login butonu ulasilabilir oldugunda tiklandi");
 
@@ -74,9 +82,5 @@ public class StudentPractice_InstagramLogin extends TestBaseRapor {
 
         Assert.assertTrue(instagramPage.profilIsmiElement.isDisplayed());
         extentTest.pass("Valid email ve password ile giris yapilabildigi dogrulandi");
-
-        //sayfayi kapat
-        Driver.closeDriver();
-
     }
 }

@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="Instagram">
+    <test name="Positive Login Test">
+        <packages>
+            <package name="tests.instagram">
+
+            </package>
+        </packages>
+    </test>
+</suite>
