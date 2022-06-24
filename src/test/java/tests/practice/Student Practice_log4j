@@ -1,0 +1,106 @@
+Log4j adımarı;
+1. pom.xml e log4j ekliyoruz
+<dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.17</version>
+    </dependency>
+------------------------
+2. resources dosyasının altına "log4j.properties" oluşturuyoruz
+# logger options: ALL -> DEBUG -> INFO -> WARN -> ERROR -> FATAL -> OFF
+# Root logger option
+log4j.rootLogger=ALL, file, stdout
+# Direct log messages to a log file
+log4j.appender.file=org.apache.log4j.RollingFileAppender
+#log4j.appender.file.File=C:\\logging.log
+log4j.appender.file.File=${user.dir}/Logs/test-project.log
+log4j.appender.file.MaxFileSize=10MB
+log4j.appender.file.MaxBackupIndex=10
+log4j.appender.file.layout=org.apache.log4j.PatternLayout
+log4j.appender.file.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n
+# Direct log messages to stdout
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.Target=System.out
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n
+-----------------------
+3.framework un ismine new-file deyip "log.xml" oluşturuyoruz
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+    <appender name="fileAppender" class="org.apache.log4j.FileAppender">//logları bir dosyaya kaydetmek
+        <param name="File" value="Logfile.log"/>
+        <param name="Append" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p [%c{1}] %m %n" />
+        </layout>
+    </appender>
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p [%c{1}] %m %n" />
+        </layout>
+    </appender>
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="console"/>
+        <appender-ref ref="fileAppender"/>
+    </root>
+</log4j:configuration>
+----------------------------
+4. "Log" classı oluşturuyoruz
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
+public class Log {
+  public Logger logger = LogManager.getLogger(Log.class);//loger objesi kullanmak için gerekli
+    public Log() {
+        DOMConfigurator.configure("log4j.xml");//log4j.xml e ulaşmak için kullanılır
+    }
+    public void info(String message){
+        logger.info(message);
+    }
+    public void warn(String message){
+        logger.warn(message);
+    }
+    public void error(String message){
+        logger.error(message);
+    }
+}
+--------------------------
+5. log ve test mekanizmasını oluşturmak için "utilities" package içerisine "TestResultLogger" oluşturuyoruz.
+package utilities;
+import logger.Log;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestWatcher;
+import java.util.Optional;
+public class TestResultLogger implements TestWatcher {//testinizi takip eden IPA
+    Log log = new Log();
+    @Override
+    public void testSuccessful(ExtensionContext context) {//başarılı olursa
+        String testName = context.getDisplayName();
+        log.info(testName + " PASSED");
+    }
+    @Override
+    public void testFailed(ExtensionContext context, Throwable cause) {
+        String testName = context.getDisplayName();
+        String testFailCause = cause.getMessage() ;
+        log.error(testName + " FAILED with cause : " + testFailCause);
+    }
+    @Override
+    public void testDisabled(ExtensionContext context, Optional<String> reason) {
+//
+    }
+    @Override
+    public void testAborted(ExtensionContext context, Throwable cause) {
+        String testName = context.getDisplayName();
+        String testAbordCause = cause.getMessage() ;
+        log.warn(testName + " FAILED with cause : " +testAbordCause);
+    }
+}
+---------------------------------
+6. son olarak testimize class isminden önce şunu ekliyouz
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)//
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ExtendWith(TestResultLogger.class)
+ve her testimiz @Test altına @Order(1) ekleyip akış numaralarını yazıyoruz.
+iyi çalışmalar..
