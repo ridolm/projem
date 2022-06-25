@@ -49,7 +49,7 @@ public class Q6_DropDown_FakerClass extends TestBase {
         }
         driver.findElement(By.xpath("(//span[.='İleri'])[2]")).click();
 
-
+//inşallah oldu
     }
 
 
